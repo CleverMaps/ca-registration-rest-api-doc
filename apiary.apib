@@ -1,80 +1,65 @@
-FORMAT: 1A
-HOST: http://polls.apiblueprint.org/
-
-# Registration for CleverAssets REST API
-
-Polls is a simple API allowing consumers to view polls and vote in them.
-
-## Questions Collection [/questions]
-
-### List All Questions [GET]
-
-+ Response 200 (application/json)
-
-        [
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
-            }
-        ]
-
-### Create a New Question [POST]
-
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
-
-+ Request (application/json)
-
-        {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
-        }
-
-+ Response 201 (application/json)
-
-    + Headers
-
-            Location: /questions/2
-
-    + Body
-
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
-                ]
-            }
+swagger: '2.0'
+info:
+  description: Api Documentation
+  version: '1.0'
+  title: Api Documentation
+  termsOfService: 'urn:tos'
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0'
+host: 'dev.mi.cleverassets.cz'
+basePath: /registration
+paths:
+  /request-registration:
+    post:
+      tags:
+        - registration-controller
+      summary: requestRegistration
+      operationId: requestRegistrationUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: request
+          description: request
+          required: true
+          schema:
+            $ref: '#/definitions/RegistrationRequestDTO'
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Client Bad Request
+          schema:
+            $ref: '#/definitions/ErrorDTO'
+        '500':
+          description: Internal Server Error
+          schema:
+            type: string
+definitions:
+  RegistrationRequestDTO:
+    type: object
+    properties:
+      appVersion:
+        type: string
+        enum:
+          - OWNER
+          - FARM
+      email:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+    title: RegistrationRequestDTO
+  ErrorDTO:
+    type: object
+    properties:
+      errors:
+        type: array
+        items:
+          type: string
+    title: ErrorDTO
